@@ -4,7 +4,7 @@ from __future__ import print_function
     Code 1 - Greedy Algorithm
 
     Assignment  5 -  Algorithm Report
-    Due         July 24, 2022
+    Due         July 26, 2023
     University  Dakota State University
     Student     Kiera Conway
 
