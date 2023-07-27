@@ -14,6 +14,10 @@ from __future__ import print_function
 # Python Standard Libraries
 import random                           # pseudo-random number generator
 from operator import attrgetter         # intrinsic operator functions
+import sys
+import getopt
+import math
+import time
 
 # Python 3rd Party Libraries
 from prettytable import PrettyTable     # display data in table format
@@ -23,7 +27,7 @@ from prettytable import PrettyTable     # display data in table format
 n = -1                  # number of items
 max_capacity = -1       # knapsack capacity
 knapsack = []           # knapsack contents
-
+DEBUG = False           # Debug Flag
 
 """ ===== Defining Script Classes ===== """
 
@@ -50,6 +54,9 @@ class Item:
 
 
 """ ===== Defining Script Functions ===== """
+
+
+
 #
 # Function:     ext_greedy_knapsack()
 #
@@ -84,6 +91,35 @@ def ext_greedy_knapsack(item_list):
     # Return Total Knapsack Values
     return current_weight, current_value
 
+#
+# Function:     usage()
+#
+# Purpose:      Displays the usage summary for the email address DFA simulation
+#
+def usage():
+    print_line(95)
+    print("A Greedy Algorithm Solution for KP\n "
+          "ver 1.0, 2023\n "
+          "Usage: python 3 kp_extended_greedy.py -h -v\n\n"
+          " -n <items>   \t\t Set Item Amount \t\t|   Example: python 3 kp_extended_greedy.py -n 15\n\n",
+          "-h  |  --help \t\t Display Usage summary \t|   Example: python 3 kp_extended_greedy.py -h\n",
+          "-d  |  --debug \t Set Debug Mode \t\t|   Example: python 3 kp_extended_greedy.py -d\t")
+    print_line(95)
+
+
+#
+# Function:     print_line(length)
+#
+# Purpose:      Prints a line of specified length using hyphens
+#
+# Parameters:   length - The length of the line to be printed
+#
+def print_line(length):
+    print()
+    for i in range(0, length):
+        print("-", end='')  # Print Separator
+    print("\n")
+
 
 """ ===== Main Script Starts Here ===== """
 
@@ -99,25 +135,68 @@ def ext_greedy_knapsack(item_list):
 #
 if __name__ == '__main__':
 
+    # Record program starting time
+    p_start_time = time.time()
+
     ''' Initial Variables '''
     # Create Table Objects and Define Headings
-    all_tbl = PrettyTable(["Item", "Weight", "Value"])      # all possible items
-    knap_tbl = PrettyTable(["Item", "Weight", "Value"])     # knapsack items only
+    all_tbl = PrettyTable(["Item", "Weight", "Value", "Efficiency"])      # all possible items
+    knap_tbl = PrettyTable(["Item", "Weight", "Value", "Efficiency"])     # knapsack items only
     summary_tbl = PrettyTable(header=False)                 # knapsack summary
-
     random.seed()
 
-    # Set Number of Items
-    n = random.randint(3, 10)
+    ''' Parse Command Line Input '''
+    # Parse User Input
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "dhn:", ["debug", "help"])
 
-    ''' Create List '''
-    # Create a Random List of n Items
-    items_list = []
-    for i in range(n):
-        item = Item(i,
-                    random.randint(1, 10),
-                    random.randint(1, 100))
-        items_list.append(item)
+        for opt, arg in opts:
+            if opt in ['-d', '--debug']:
+                DEBUG = True
+
+            elif opt in ['-h', '--help']:
+                usage()
+                exit()
+
+            elif opt in ['-n']:
+                n = int(arg)
+
+    except Exception as err:
+        print(f'Invalid Input: {err}\n Restoring Default Settings ...\n\n')
+
+
+    ''' Check if in DEBUG Mode '''
+    if DEBUG:
+
+        # Set Constant Number of Items, n
+        n = 10
+
+        # Create a Constant List of n Items
+        items_list = [
+            Item(0, 2, 10),
+            Item(1, 3, 15),
+            Item(2, 5, 8),
+            Item(3, 4, 12),
+            Item(4, 1, 6),
+            Item(5, 6, 20),
+            Item(6, 2, 14),
+            Item(7, 7, 30),
+            Item(8, 3, 25),
+            Item(9, 4, 18),
+        ]
+
+    else:
+        # Check if User Set n
+        if n == -1:
+            # Set Random Number of Items, n
+            n = random.randint(3, 10)
+
+        # Create a Random List of n Items
+        items_list = []
+        for i in range(n):
+            item = Item(i, random.randint(1, 10), random.randint(1, 100))
+            items_list.append(item)
+
 
     ''' Set Capacity '''
     # Caclulate Total and Max Weights
@@ -132,22 +211,29 @@ if __name__ == '__main__':
     items_list = sorted(items_list, key=attrgetter('efficiency'), reverse=True)
 
     ''' Call Extended Greedy Algorithm to Solve KP '''
+    a_start_time = time.time()          # Record algorithm starting time
     knap_weight, knap_value = ext_greedy_knapsack(items_list)
+    a_end_time = time.time()            # Record algorithm ending time
 
     """
     #
     # Program Termination
     #
     """
-
     ''' Add Item Values to Tables '''
     # Table for All Items
     for each in items_list:
-        all_tbl.add_row([each.number, each.weight, each.value])
+        all_tbl.add_row([each.number,
+                         each.weight,
+                         each.value,
+                         math.floor(each.efficiency)])
 
     # Table for Knapsack Items Only
     for each in knapsack:
-        knap_tbl.add_row([each.number, each.weight, each.value])
+        knap_tbl.add_row([each.number,
+                          each.weight,
+                          each.value,
+                          math.floor(each.efficiency)])
 
     # Table for Knapsack Summary
     summary_tbl.add_row(["Total Value", knap_value])
@@ -176,13 +262,20 @@ if __name__ == '__main__':
     print()
 
     # Table for Knapsack Summary
-    print("Knapsack Summary:")
+    print("Greedy Knapsack Summary:")
     summary_tbl.vrules = 0
     summary_tbl.hrules = 0
     summary_tbl.align = "l"
     summary_result = summary_tbl.get_string()
     print(summary_result)
     print()
+
+    # Record program ending time
+    p_end_time = time.time()
+
+    # Print the runtime in seconds
+    print(f"Algorithm runtime: {(a_end_time - a_start_time):.6f} seconds\n"
+          f"Script runtime: {(p_end_time - p_start_time):.6f} seconds")
 
     ''' Print End of Script Message '''
     print("\nScript End")
