@@ -135,6 +135,11 @@ def print_line(length):
 #
 if __name__ == '__main__':
 
+    """
+    #
+    # Program Initialization
+    #
+    """
     # Record program starting time
     p_start_time = time.time()
 
@@ -186,7 +191,7 @@ if __name__ == '__main__':
         ]
 
     else:
-        # Check if User Set n
+        # If User Did Not Set n
         if n == -1:
             # Set Random Number of Items, n
             n = random.randint(3, 10)
@@ -209,7 +214,12 @@ if __name__ == '__main__':
     ''' Sort List in Descending Order '''
     # Sort Items by Efficiency in Descending Order
     items_list = sorted(items_list, key=attrgetter('efficiency'), reverse=True)
-
+    
+    """
+    #
+    # Greedy Algorithm
+    #
+    """
     ''' Call Extended Greedy Algorithm to Solve KP '''
     a_start_time = time.time()          # Record algorithm starting time
     knap_weight, knap_value = ext_greedy_knapsack(items_list)

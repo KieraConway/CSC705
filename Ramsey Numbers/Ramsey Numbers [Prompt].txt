@@ -1,0 +1,10 @@
+Instructions
+This assignment is purely extra credit and is therefore optional. There are many resources regarding Ramsey Numbers and the Ramsey Theorem; notably:
+R. L. Graham and J. H. Spencer. Ramsey Theory. Scientific American, 263(1), July 1990.
+R. L. Graham, B. L. Rothschild, and J. H. Spencer. Ramsey Theory. John Wiley & Sons. 1990.
+
+Directions:
+
+A Ramsey number R(i, j) is defined as the smallest number n such that every graph on n vertices has either a clique of size i or an independent set of size j. Ramsey's Theorem states that R(i, j) exists for all i, j in the set of Natural Numbers. Devise an algorithm that, given i, j, finds R(i, j). Analyze your algorithm's time complexity, but you don't need to prove it by induction.
+
+Due on Aug 2, 2023 11:59 PM
