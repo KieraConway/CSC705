@@ -1,19 +1,50 @@
+/* ------------------------------------------------------------------------
+    RamseyNumbers_Recursive.c
+        calculate the Ramsey number R(i, j) using recursive and
+        mathematical rules from Ramsey theory.
 
-#include <stdio.h>
-#include <stdlib.h>
+    CSC 705
+    Design & Analysis of Algorithms
+    Dakota State University
 
+    Kiera Conway
+
+------------------------------------------------------------------------ */
+
+#include <stdio.h>   // Standard Input/Output Library
+#include <stdlib.h>  // Memory Allocation and Conversion Functions
+
+/** ---------------------------- Constants ---------------------------- **/
 #define MAX_INPUT 100
 
+/** ---------------------------- Functions ---------------------------- **/
+/*
+ * Function:    RamseyNumber()
+ *
+ * Purpose:     Calculates the Ramsey number R(i, j) using recursion,
+ *              the base cases, and three rules of Ramsey theory
+ *
+ * Parameters:  i - first parameter for the Ramsey number
+ *              j - second parameter for the Ramsey number
+ *
+ * Return:      calculated Ramsey number R(i, j)
+ */
 int RamseyNumber(int i, int j){
-    /* Base Case */
+
+    /* * * * * * * * * * * * * * * *
+     * Base Case:
+     *      R(i,1) = 1
+     *      R(1,j) = 1
+     * * * * * * * * * * * * * * * */
     if(i==1 || j==1){
         return 1;
     }
 
-    /* Rule 1:
+    /* * * * * * * * * * * * * * * *
+     * Rule 1:
      *      R(i,2)=i
      *      R(2,j)=j
-     */
+     * * * * * * * * * * * * * * * */
     if(i==2){
         return j;
     }
@@ -22,38 +53,51 @@ int RamseyNumber(int i, int j){
     }
 
     /* Recursive Step */
+    /* * * * * * * * * * * * * * * *
+     * Rule 2:
+     *      R(i,i) <= 4*R(i−2,i)+2
+     * * * * * * * * * * * * * * * */
     int result, m, n;
 
-    /* Rule 2:
-     *      R(i,i)<= 4*R(m−2,m)+2
-     */
     if (i==j){
         result = 4*RamseyNumber(i-2,j)+2;
     }
     else{
         m = RamseyNumber(i-1, j);
         n = RamseyNumber(i,j-1);
-        /* Rule 3:
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * *
+         * Rule 3:
          *      if R(i−1, j) and R(i, j−1) are even:
          *          R(i−1, j)+R(i, j−1)−1
-         *
          *      else:
          *          R(i−1, j)+R(i, j−1)
-         */
+         * * * * * * * * * * * * * * * * * * * * * * */
         if (m%2 == 0 && n%2 == 0) {
             result = m + n - 1;
         }
         else{
             result = m + n ;
-
         }
     }
 
-    /* Return Value */
+    /* Return Ramsey Result */
     return result;
 }
 
-
+/*
+ * Function:    main()
+ *
+ * Purpose:     Entry point of the program
+ *              Accepts user input for i and j, and calculates the Ramsey number R(i, j)
+ *
+ * Parameters:  argc - number of command-line arguments
+ *              argv - array containing the command-line arguments
+ *
+ * Return:      -1 - invalid input parameters passed
+ *               0 - successful execution
+ */
 int main(int argc, char *argv[]){
 
     /*
